@@ -11,14 +11,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NTRUClient
+namespace NTRUControl
 {
     public partial class Form1 : Form
     {
         public Form1()
         {
             InitializeComponent();
-            btnSend.Enabled = true;
         }
 
         private Socket clientSocket;
@@ -42,38 +41,18 @@ namespace NTRUClient
             btnConnect.Enabled = false;
             txtIP.Enabled = false;
             txtPort.Enabled = false;
-            btnSend.Enabled = true;
 
-            //Task.Run(() =>
-            //{
-            //    while (true)
-            //    {
-            //        string recStr = "";
-            //        byte[] recBytes = new byte[4096];
-            //        int bytes = clientSocket.Receive(recBytes, recBytes.Length, 0);
-            //        recStr += Encoding.Default.GetString(recBytes, 0, bytes);
-            //        txtMsg.Text += recStr + "\r\n";
-            //    }
-            //});
-        }
-
-        private void btnSend_Click(object sender, EventArgs e)
-        {
-            try
+            Task.Run(() =>
             {
-               var ciphertextMsg = encryption.Encryption(txtInput.Text);
-                byte[] buffer = Encoding.Default.GetBytes(ciphertextMsg);
-                clientSocket.Send(buffer, buffer.Length, SocketFlags.None);
-                txtMsg.Text += txtInput.Text + "\r\n";
-                txtInput.Text = "";
-            }
-            catch (SocketException ex)
-            {
-                MessageBox.Show("连接不到服务器");
-                clientSocket.Close();
-                this.Close();
-            }
-
+                while (true)
+                {
+                    string recStr = "";
+                    byte[] recBytes = new byte[4096];
+                    int bytes = clientSocket.Receive(recBytes, recBytes.Length, 0);
+                    recStr += Encoding.Default.GetString(recBytes, 0, bytes);
+                    txtMsg.Text += recStr + "\r\n";
+                }
+            });
         }
     }
 }

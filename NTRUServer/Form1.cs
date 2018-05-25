@@ -20,8 +20,8 @@ namespace NTRUServer
             InitializeComponent();
         }
         private NTRUEncryption encryption = new NTRUEncryption();
-        private Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        private List<Socket> proxSocketList = new List<Socket>();
+        private Socket serverSocket;
+        private List<Socket> proxSocketList;
         private Task acceptTask;
         private void btnListen_Click(object sender, EventArgs e)
         {
@@ -30,8 +30,11 @@ namespace NTRUServer
             lbStatus.Text = "Listening......";
             txtIP.Enabled = false;
             txtPort.Enabled = false;
+            btnStop.Enabled = true;
             try
             {
+                proxSocketList = new List<Socket>();
+                serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 IPAddress ipAddress = IPAddress.Parse(txtIP.Text.Trim());
                 int port = int.Parse(txtPort.Text.Trim());
                 IPEndPoint endPoint = new IPEndPoint(ipAddress, port);
@@ -51,7 +54,7 @@ namespace NTRUServer
                      proxSocketList.Add(proxSocket);
                      this.Invoke(new Action(() =>
                      {
-                         txtLog.Text += "新的连接:" + proxSocket.RemoteEndPoint.ToString() + " \r\n";
+                         listboxLog.Items.Add("新的连接:" + proxSocket.RemoteEndPoint.ToString() + " \r\n");
                      }));
 
                      Task.Run(() =>
@@ -66,22 +69,23 @@ namespace NTRUServer
                                  var message = encryption.Decryption(strResult);
                                  this.Invoke(new Action(() =>
                                  {
-                                     txtLog.Text += proxSocket.RemoteEndPoint + ":" + message + "  \r\n";
+
+                                     listboxLog.Items.Add(proxSocket.RemoteEndPoint + ":" + message + Environment.NewLine);
                                  }));
-                                  //byte[] sendBuffer = Encoding.Default.GetBytes(strResult);
-                                  //foreach (var item in proxSocketList)
-                                  //{
-                                  //    if (item != proxSocket)
-                                  //    {
-                                  //        item.Send(sendBuffer, 0, sendBuffer.Length, SocketFlags.None);
-                                  //    }
-                                  //}
-                              }
+                                 byte[] sendBuffer = Encoding.Default.GetBytes(strResult);
+                                 foreach (var item in proxSocketList)
+                                 {
+                                     if (item != proxSocket)
+                                     {
+                                         item.Send(sendBuffer, 0, sendBuffer.Length, SocketFlags.None);
+                                     }
+                                 }
+                             }
                              catch (SocketException)
                              {
                                  this.Invoke(new Action(() =>
                                  {
-                                     txtLog.Text += proxSocket.RemoteEndPoint + "断开了连接\r\n";
+                                     listboxLog.Items.Add(proxSocket.RemoteEndPoint + "断开了连接\r\n");
                                  }));
                                  proxSocketList.Remove(proxSocket);
                                  proxSocket.Close();
@@ -95,6 +99,15 @@ namespace NTRUServer
         private void btnStop_Click(object sender, EventArgs e)
         {
             serverSocket.Close();
+            acceptTask.Dispose();
+            serverSocket = null;
+            proxSocketList = new List<Socket>();
+
+            btnListen.Enabled = true;
+            lbStatus.Text = "Stop......";
+            txtIP.Enabled = true;
+            txtPort.Enabled = true;
+            btnStop.Enabled = false;
         }
     }
 }

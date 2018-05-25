@@ -35,7 +35,7 @@
             this.btnListen = new System.Windows.Forms.Button();
             this.lbStatus = new System.Windows.Forms.Label();
             this.btnStop = new System.Windows.Forms.Button();
-            this.txtLog = new System.Windows.Forms.TextBox();
+            this.listboxLog = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // txtIP
@@ -97,6 +97,7 @@
             // 
             // btnStop
             // 
+            this.btnStop.Enabled = false;
             this.btnStop.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnStop.Location = new System.Drawing.Point(460, 9);
             this.btnStop.Name = "btnStop";
@@ -106,23 +107,21 @@
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
-            // txtLog
+            // listboxLog
             // 
-            this.txtLog.BackColor = System.Drawing.Color.White;
-            this.txtLog.Font = new System.Drawing.Font("微软雅黑", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.txtLog.Location = new System.Drawing.Point(12, 76);
-            this.txtLog.Multiline = true;
-            this.txtLog.Name = "txtLog";
-            this.txtLog.ReadOnly = true;
-            this.txtLog.Size = new System.Drawing.Size(499, 267);
-            this.txtLog.TabIndex = 19;
+            this.listboxLog.FormattingEnabled = true;
+            this.listboxLog.ItemHeight = 12;
+            this.listboxLog.Location = new System.Drawing.Point(23, 75);
+            this.listboxLog.Name = "listboxLog";
+            this.listboxLog.Size = new System.Drawing.Size(494, 268);
+            this.listboxLog.TabIndex = 20;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(529, 366);
-            this.Controls.Add(this.txtLog);
+            this.Controls.Add(this.listboxLog);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.lbStatus);
             this.Controls.Add(this.btnListen);
@@ -145,7 +144,7 @@
         private System.Windows.Forms.Button btnListen;
         private System.Windows.Forms.Label lbStatus;
         private System.Windows.Forms.Button btnStop;
-        private System.Windows.Forms.TextBox txtLog;
+        private System.Windows.Forms.ListBox listboxLog;
     }
 }
 
